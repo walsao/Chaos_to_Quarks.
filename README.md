@@ -27,6 +27,7 @@ This project simulates the emergence of breathing condensates (proto-quarks) fro
 - `chaos_to_quarks_simulation.py`: Python code for the simulation.
 - `chaos_to_quarks_simulation.py2`: Python code for the simulation2.
 - `chaos_to_quarks.png`: Snapshot of breathing condensation.
+- `chaos_to_quarks.png2`: Snapshot of breathing condensation2.
 - `README.md`: Project description.
 - `LICENSE`: MIT License.
 
