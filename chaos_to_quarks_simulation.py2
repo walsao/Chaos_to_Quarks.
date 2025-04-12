@@ -1,0 +1,64 @@
+# 🚀 Walter's Extreme Spartan Chaos-to-Quark Simulation (Animated Short)
+
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+from scipy.integrate import solve_ivp
+
+# --- Parameters ---
+n_points = 300             # Bigger Grid Size
+kappa = 1.0
+Lambda = 1.5               # Stronger breathing field (higher Lambda)
+g_coupling = 10.0          # Very strong relational coupling
+t_max = 15                 # Short but intense time
+n_times = 300              # Fine resolution for short animation
+
+# --- Breathing Field Potential ---
+def breathing_force(phi):
+    return Lambda**4 * np.sin(phi)
+
+# --- System of ODEs ---
+def breathing_system(t, y):
+    phi = y[:n_points]
+    dphi = y[n_points:]
+    ddphi = np.zeros_like(phi)
+
+    # Apply breathing dynamics + strong neighbor coupling
+    for i in range(n_points):
+        left = phi[i-1] if i > 0 else phi[i]
+        right = phi[i+1] if i < n_points-1 else phi[i]
+        neighbor_force = g_coupling * (left + right - 2 * phi[i])
+        ddphi[i] = (breathing_force(phi[i]) + neighbor_force) / kappa
+
+    return np.concatenate([dphi, ddphi])
+
+# --- Initial Conditions: MAXIMUM CHAOS
+np.random.seed(42)
+phi0 = np.random.uniform(-2*np.pi, 2*np.pi, n_points)  # DOUBLE chaos
+dphi0 = np.random.uniform(-0.5, 0.5, n_points)         # Bigger initial velocities
+y0 = np.concatenate([phi0, dphi0])
+
+# --- Time Grid ---
+t_eval = np.linspace(0, t_max, n_times)
+
+# --- Solve the system ---
+sol = solve_ivp(breathing_system, [0, t_max], y0, t_eval=t_eval, method='RK45')
+
+# --- Reshape Solution ---
+phi_sol = sol.y[:n_points, :]
+
+# --- Set up Animation ---
+fig, ax = plt.subplots(figsize=(14, 6))
+line = ax.imshow(phi_sol[:,0].reshape(-1,1), cmap='plasma', aspect='auto', vmin=-20, vmax=20, extent=[0,1,0,n_points])
+ax.set_title("Walter's Extreme Spartan Chaos-to-Quarks Simulation 🛡️🔥")
+ax.set_xlabel('Breathing Snapshot')
+ax.set_ylabel('Position on 1D Grid')
+
+def update(frame):
+    line.set_array(phi_sol[:, frame].reshape(-1,1))
+    return [line]
+
+ani = animation.FuncAnimation(fig, update, frames=n_times, interval=50, blit=True)
+
+plt.tight_layout()
+plt.show()
